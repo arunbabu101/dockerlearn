@@ -248,18 +248,18 @@ def verify_payment(request):
 # UserSignup Form
 def signup(request):
     next_page = request.GET.get('next')
-    form=CustomerCreationForm()
-    customerForm=CustomerForm()
-    mydict={'form':form,'customerForm':customerForm}
-    if request.method=='POST':
+    form = CustomerCreationForm()
+    customerForm = CustomerForm()
+    
+    if request.method == 'POST':
         form = CustomerCreationForm(request.POST)
-        customerForm=CustomerForm(request.POST,request.FILES)
+        customerForm = CustomerForm(request.POST, request.FILES)
         if form.is_valid() and customerForm.is_valid():
             user = form.save()
             user.email = user.username
             user.save()
-            customer=customerForm.save(commit=False)
-            customer.user=user
+            customer = customerForm.save(commit=False)
+            customer.user = user
             customer.save()
             my_customer_group = Group.objects.get_or_create(name='CUSTOMER')
             my_customer_group[0].user_set.add(user)
@@ -267,7 +267,8 @@ def signup(request):
                 return redirect(request.POST.get('next'))
             else:
                 return redirect('userlogin')
-    context = {'form':form, 'customerForm':customerForm}
+    
+    context = {'form': form, 'customerForm': customerForm}
     return render(request, 'users/signup.html', context)
 
 # UserSignup Form

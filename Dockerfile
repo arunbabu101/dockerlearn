@@ -5,18 +5,19 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Set work directory
-WORKDIR /usr/src/app
+WORKDIR /newmp
 
 # Install PostgreSQL development package
 RUN apt-get update && \
     apt-get install -y libpq-dev gcc
-    
+
+
 # Install dependencies
-COPY requirements.txt /usr/src/app/
+COPY requirements.txt /newmp
 RUN pip install -r requirements.txt
 
 # Copy project
-COPY . /usr/src/app/
+COPY . /newmp
 
 # Run the application
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "edureka.wsgi:application"]
