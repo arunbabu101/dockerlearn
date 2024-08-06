@@ -22,6 +22,7 @@ import razorpay
 KEY_ID = settings.RAZORPAY_KEY_ID
 KEY_SECRET = settings.RAZORPAY_KEY_SECRET
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
+from django.contrib.auth import authenticate, login as auth_login
  
 # Create your views here.
 
@@ -274,26 +275,19 @@ def signup(request):
 # UserSignup Form
 def login(request):
     if request.method == 'GET':
-        form = Customerloginform() #This comes from forms.py
-        next_page = request.GET.get('next') #If url has next value so this function will redirect the user on next page url                
-        context = {'form':form}
+        next_page = request.GET.get('next')
+        context = {'next': next_page}
         return render(request, 'users/login.html', context)
     else:
-        form = Customerloginform(data=request.POST) #This comes from forms.py
-        if form.is_valid():
-            username = form.cleaned_data.get('username')    
-            password = form.cleaned_data.get('password')    
-            user = authenticate(username=username, password=password)
-            if user:
-                loginUser(request, user) #We use loginUser here because yaha 2 login ho gye hai to alag se import kiya hai isko humne
-            # messages.success(request, "Welcome Sir")
-            #If url has next value so this function will redirect the user on next page url
-            if 'next' in request.POST:
-                return redirect(request.POST.get('next'))
-            else:        
-                return redirect('userhome')  
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            auth_login(request, user)
+            next_page = request.POST.get('next', 'userhome')
+            return redirect(next_page)
         else:
-            context = {'form':form}
+            context = {'error': 'Invalid username or password', 'next': request.POST.get('next')}
             return render(request, 'users/login.html', context)
 
 
