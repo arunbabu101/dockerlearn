@@ -8,6 +8,7 @@ click
 colorama
 cryptography
 cssselect2
+crispy-bootstrap4
 dj-database-url
 Django
 django-autoslug
